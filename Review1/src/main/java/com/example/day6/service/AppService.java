@@ -1,9 +1,11 @@
 package com.example.day6.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.day6.model.ApplianceBook;
@@ -12,51 +14,52 @@ import com.example.day6.repository.AppRepo;
 @Service
 public class AppService {
 	@Autowired
-	public AppRepo apprepo;
+	public AppRepo hrepo;
 	
 	//post data
-	public String saveApp(ApplianceBook a)
+	public String saveReview(ApplianceBook h)
 	{
-		apprepo.save(a);
+		hrepo.save(h);
 		return "Data is saved to database";
 	}
 	
 	//get data
-	public List<ApplianceBook> getApp()
+	public List<ApplianceBook> getReview()
 	{
-		return apprepo.findAll();
+		return hrepo.findAll();
 	}
 	
 	//update the data
-	public ApplianceBook updateApp(ApplianceBook hma)
+	public ApplianceBook updateReview(ApplianceBook hm)
 	{
-		return apprepo.saveAndFlush(hma);
+		return hrepo.saveAndFlush(hm);
 	}
 	
 	//delete the data
-	public void deleteApp(int id)
-	{
-		System.out.println("Deleted");
-		apprepo.deleteById(id);
-	}
-	
-	public boolean deleteappinfo(int appId)
-	{
-		if(apprepo.existsById(appId))
+		public void deleteReview(int id)
 		{
-			apprepo.deleteById(appId);
-			return true;
+			System.out.println("Deleted");
+			hrepo.deleteById(id);
 		}
-		return false;
-	}
-	
-	public Optional<ApplianceBook> getUserId(int userId)
-	   {
-		   Optional<ApplianceBook>app=apprepo.findById(userId);
-		   if(app.isPresent())
-		   {
-			   return app;
-		   }
-		   return null;
-	   }
-	}
+		
+		//sorting
+		
+		public List<ApplianceBook> sortByAsc(String name)
+		{
+			return hrepo.findAll(org.springframework.data.domain.Sort.by(name).ascending());
+		}
+		
+		//pagination
+				public List<ApplianceBook> pagination(int pnum,int psize)
+				{
+					Page<ApplianceBook> cont=hrepo.findAll(PageRequest.of(pnum, psize));
+					return cont.getContent();
+				}
+				
+			//pagination and sorting
+				public List<ApplianceBook> paginationAndSorting(int pnum,int psize,String name)
+				{
+					Page<ApplianceBook> cont1=hrepo.findAll(PageRequest.of(pnum, psize, Sort.by(name)));
+					return cont1.getContent();
+				}
+}
